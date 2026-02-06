@@ -1,0 +1,177 @@
+/* =============================================================
+   Demo App Styles
+   ============================================================= */
+
+.demo-app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 32px 60px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #e0e0e0;
+}
+
+.demo-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #333;
+}
+
+.demo-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #5dade2, #ba68c8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 8px;
+}
+
+.demo-header p {
+  color: #999;
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+.demo-subtitle {
+  font-size: 12px !important;
+  color: #666 !important;
+  margin-top: 12px !important;
+}
+
+.demo-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.demo-section {
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 0.2s ease;
+}
+
+.demo-section:hover {
+  border-color: #3a3a6a;
+}
+
+.demo-section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e8e8e8;
+  margin: 0 0 8px;
+}
+
+.demo-section p {
+  color: #999;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.demo-section p code {
+  background: #0f3460;
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: #5dade2;
+  font-size: 12px;
+}
+
+.demo-section p strong {
+  color: #ccc;
+}
+
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #0f3460, #1a5276);
+  color: #5dade2;
+  border: 1px solid #1a5276;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.demo-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1a5276, #2471a3);
+  border-color: #2471a3;
+  box-shadow: 0 2px 8px rgba(93, 173, 226, 0.2);
+}
+
+.demo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.demo-btn-secondary {
+  background: linear-gradient(135deg, #1e4d2b, #2e6b3d);
+  color: #82e0aa;
+  border-color: #2e6b3d;
+}
+
+.demo-btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2e6b3d, #3e8b4d);
+  border-color: #3e8b4d;
+  box-shadow: 0 2px 8px rgba(130, 224, 170, 0.2);
+}
+
+.demo-btn-active {
+  background: linear-gradient(135deg, #7b241c, #922b21);
+  color: #f5b7b1;
+  border-color: #922b21;
+}
+
+.demo-btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.demo-element-area {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  margin-bottom: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.demo-target-box {
+  background: linear-gradient(135deg, #1a5276, #2471a3);
+  border: 2px dashed #5dade2;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5dade2;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.demo-tracking-area {
+  margin-top: 12px;
+  height: 150px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px dashed #333;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.demo-tracking-area.active {
+  border-color: #FFD54F;
+  color: #FFD54F;
+  background: rgba(255, 213, 79, 0.05);
+}

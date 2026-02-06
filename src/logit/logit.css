@@ -1,0 +1,693 @@
+/* =============================================================
+   Log-it CSS — Styles for the Log Stream UI
+   ============================================================= */
+
+/* --- Log Panel (container) --- */
+.log-panel {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-size: 12px;
+  border-left: 1px solid #333;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+  z-index: 9990;
+}
+
+.log-panel[data-position="bottom"] {
+  border-left: none;
+  border-top: 1px solid #333;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.log-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #16213e;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.log-panel-toggle {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.log-panel-toggle:hover {
+  background: #333;
+  color: #fff;
+}
+
+.log-panel-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.log-panel-count {
+  color: #888;
+  font-size: 11px;
+}
+
+.log-panel-filter {
+  flex: 1;
+  background: #0f3460;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #e0e0e0;
+  padding: 4px 8px;
+  font-size: 11px;
+  outline: none;
+}
+
+.log-panel-filter:focus {
+  border-color: #5dade2;
+}
+
+.log-panel-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.log-panel-clear:hover {
+  background: #500;
+  opacity: 1;
+}
+
+.log-panel-streams {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.log-panel-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.log-panel-empty code {
+  background: #0f3460;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #5dade2;
+}
+
+/* --- Stream View --- */
+.stream-view {
+  background: #16213e;
+  border-radius: 8px;
+  border-left: 4px solid #4A90D9;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.stream-view:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.stream-dragging {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  opacity: 0.95;
+}
+
+.stream-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  min-height: 32px;
+}
+
+.stream-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stream-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stream-drag-handle {
+  cursor: grab;
+  color: #555;
+  font-size: 16px;
+  user-select: none;
+  line-height: 1;
+}
+
+.stream-drag-handle:hover {
+  color: #888;
+}
+
+.stream-drag-handle:active {
+  cursor: grabbing;
+}
+
+.stream-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.stream-name {
+  font-weight: 600;
+  color: #e8e8e8;
+  font-size: 12px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stream-count {
+  background: rgba(255, 255, 255, 0.1);
+  color: #aaa;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.stream-path-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(93, 173, 226, 0.15);
+  color: #5dade2;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.stream-path-copy,
+.stream-path-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0 2px;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.stream-path-copy:hover,
+.stream-path-clear:hover {
+  opacity: 1;
+}
+
+/* --- Collected properties --- */
+.stream-collected {
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stream-collected-header {
+  font-size: 10px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.stream-collected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin: 2px 4px 2px 0;
+  font-size: 10px;
+}
+
+.stream-collected-tag button {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0;
+}
+
+/* --- Stream Body --- */
+.stream-body {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* --- List View --- */
+.stream-list {
+  padding: 4px 0;
+}
+
+.stream-entry {
+  display: flex;
+  align-items: flex-start;
+  padding: 3px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  gap: 8px;
+}
+
+.stream-entry:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.stream-entry-index {
+  color: #555;
+  font-size: 10px;
+  min-width: 24px;
+  text-align: right;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.stream-entry-time {
+  color: #666;
+  font-size: 10px;
+  min-width: 60px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.stream-entry-value {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+/* --- Slider View (In-Place Sliding) --- */
+.stream-slider {
+  padding: 8px 10px;
+}
+
+.stream-slider-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.stream-slider-controls button {
+  background: #0f3460;
+  border: 1px solid #333;
+  color: #e0e0e0;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.stream-slider-controls button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.stream-slider-controls button:hover:not(:disabled) {
+  background: #1a5276;
+}
+
+.stream-slider-range {
+  flex: 1;
+  accent-color: #5dade2;
+}
+
+.stream-slider-label {
+  color: #888;
+  font-size: 11px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.stream-slider-timestamp {
+  color: #666;
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+.stream-slider-content {
+  padding: 4px 0;
+}
+
+.stream-slider-empty {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* --- Stream Menu --- */
+.stream-menu {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stream-menu-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: #888;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.stream-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ddd;
+}
+
+.stream-menu-btn.active {
+  background: rgba(93, 173, 226, 0.15);
+  color: #5dade2;
+  border-color: rgba(93, 173, 226, 0.3);
+}
+
+.stream-menu-btn-danger:hover {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+.stream-menu-separator {
+  width: 1px;
+  height: 16px;
+  background: #333;
+  margin: 0 4px;
+}
+
+/* --- Bar Chart --- */
+.bar-chart {
+  padding: 8px 10px;
+}
+
+.bar-chart-toggle {
+  margin-bottom: 6px;
+}
+
+.bar-chart-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #888;
+  cursor: pointer;
+}
+
+.bar-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.bar-chart-label {
+  font-size: 11px;
+  color: #aaa;
+  min-width: 48px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-chart-bar-wrapper {
+  flex: 1;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar-chart-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  min-width: 2px;
+}
+
+.bar-chart-empty {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* --- Timeline Sparkline --- */
+.timeline-sparkline {
+  padding: 2px 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.timeline-sparkline canvas {
+  border-radius: 2px;
+}
+
+/* --- Object Explorer --- */
+.oe-object,
+.oe-array {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.oe-property {
+  padding: 0 0 0 4px;
+}
+
+.oe-property.oe-collected {
+  background: rgba(93, 173, 226, 0.1);
+  border-left: 2px solid #5dade2;
+  margin-left: -2px;
+}
+
+.oe-key {
+  color: #c792ea;
+  cursor: pointer;
+  user-select: none;
+}
+
+.oe-key:hover {
+  text-decoration: underline;
+  color: #d4a5f5;
+}
+
+.oe-colon {
+  color: #666;
+}
+
+.oe-string {
+  color: #c3e88d;
+}
+
+.oe-number {
+  color: #f78c6c;
+}
+
+.oe-boolean {
+  color: #ffcb6b;
+}
+
+.oe-null,
+.oe-undefined {
+  color: #666;
+  font-style: italic;
+}
+
+.oe-other {
+  color: #aaa;
+}
+
+.oe-index {
+  color: #555;
+  font-size: 10px;
+}
+
+.oe-collapsed {
+  color: #666;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.oe-collapsed:hover {
+  color: #999;
+}
+
+.oe-bracket {
+  color: #555;
+  cursor: pointer;
+}
+
+.oe-bracket:hover {
+  color: #888;
+}
+
+/* Changed value highlight (for slider mode) */
+.oe-changed {
+  background: rgba(255, 213, 79, 0.25);
+  border-radius: 2px;
+  padding: 0 2px;
+  animation: fadeChange 2s ease forwards;
+}
+
+@keyframes fadeChange {
+  from {
+    background: rgba(255, 213, 79, 0.4);
+  }
+
+  to {
+    background: rgba(255, 213, 79, 0.05);
+  }
+}
+
+/* --- LLM Insight --- */
+.llm-insight {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.llm-insight-buttons {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.llm-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.15s ease;
+}
+
+.llm-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.llm-btn-local {
+  background: #0f3460;
+  color: #5dade2;
+}
+
+.llm-btn-local:hover:not(:disabled) {
+  background: #1a5276;
+}
+
+.llm-btn-ai {
+  background: #1e4d2b;
+  color: #82e0aa;
+}
+
+.llm-btn-ai:hover:not(:disabled) {
+  background: #2e6b3d;
+}
+
+.llm-api-input {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.llm-api-input input {
+  flex: 1;
+  background: #0f3460;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #e0e0e0;
+  padding: 4px 8px;
+  font-size: 11px;
+  outline: none;
+}
+
+.llm-api-input button {
+  background: #333;
+  border: 1px solid #444;
+  color: #aaa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.llm-insight-result {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* --- Attached Stream --- */
+.attached-stream {
+  animation: fadeIn 0.2s ease;
+}
+
+.attached-stream .stream-view {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Scrollbar styling --- */
+.stream-body::-webkit-scrollbar,
+.log-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.stream-body::-webkit-scrollbar-track,
+.log-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stream-body::-webkit-scrollbar-thumb,
+.log-panel::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+.stream-body::-webkit-scrollbar-thumb:hover,
+.log-panel::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
