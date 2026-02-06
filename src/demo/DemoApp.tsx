@@ -24,10 +24,23 @@ export const DemoApp: React.FC = () => {
   return (
     <div className="demo-app">
       <header className="demo-header">
-        <h1>Log-it Demo</h1>
-        <p>Interactive, Structured, and Visual Logs for Programming</p>
-        <p className="demo-subtitle">
-          Reproduction of CHI '23 paper by Jiang, Sun &amp; Xia — with LLM Insight &amp; Timeline Sparkline extensions
+        <div className="demo-header-glow" />
+        <div className="demo-header-badge">CHI '23 Reproduction</div>
+        <h1>
+          <span className="demo-header-icon">&#xe2a8;</span>
+          Log-it
+        </h1>
+        <p className="demo-header-tagline">
+          Interactive, Structured, and Visual Logs for Programming
+        </p>
+        <div className="demo-header-meta">
+          <span className="demo-header-chip">Jiang, Sun &amp; Xia</span>
+          <span className="demo-header-chip demo-header-chip-ext">+ LLM Insight</span>
+          <span className="demo-header-chip demo-header-chip-ext">+ Timeline Sparkline</span>
+        </div>
+        <p className="demo-header-desc">
+          Explore 5 interactive scenarios below. The log panel on the right captures every <code>log()</code> call
+          with color-coded streams, property highlighting, slider navigation, and more.
         </p>
       </header>
 
