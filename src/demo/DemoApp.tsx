@@ -24,7 +24,6 @@ export const DemoApp: React.FC = () => {
   return (
     <div className="demo-app">
       <header className="demo-header">
-        <div className="demo-header-glow" />
         <div className="demo-header-badge">CHI '23 Reproduction</div>
         <h1>Log-it</h1>
         <p className="demo-header-tagline">
