@@ -26,10 +26,7 @@ export const DemoApp: React.FC = () => {
       <header className="demo-header">
         <div className="demo-header-glow" />
         <div className="demo-header-badge">CHI '23 Reproduction</div>
-        <h1>
-          <span className="demo-header-icon">&#xe2a8;</span>
-          Log-it
-        </h1>
+        <h1>Log-it</h1>
         <p className="demo-header-tagline">
           Interactive, Structured, and Visual Logs for Programming
         </p>
