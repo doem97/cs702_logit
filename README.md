@@ -83,13 +83,13 @@ src/
 
 The demo app includes 5 scenarios that map to the paper's evaluation tasks:
 
-| # | Scenario | Paper Reference | Features Demonstrated |
-|---|----------|-----------------|----------------------|
-| 1 | **Nested Loop Tracking** | C1 — logs lack organization | Stream grouping, In-Place Sliding, Bar Chart |
-| 2 | **Element Position Debug** | C3 — context loss from view switching | Element Attachment, Property Highlighting |
-| 3 | **Cluttered Log Locating** | C1 — locating logs in clutter | Color Coding, filtering, collapse/pause |
-| 4 | **Object Exploration** | C2 — data structures lack interaction | Property Highlighting, Synchronized Interaction, Collection |
-| 5 | **Real-Time Mouse Tracking** | C4 + Section 7.3 future work | Timeline Sparkline, LLM Insight |
+| #   | Scenario                     | Paper Reference                       | Features Demonstrated                                       |
+| --- | ---------------------------- | ------------------------------------- | ----------------------------------------------------------- |
+| 1   | **Nested Loop Tracking**     | C1 — logs lack organization           | Stream grouping, In-Place Sliding, Bar Chart                |
+| 2   | **Element Position Debug**   | C3 — context loss from view switching | Element Attachment, Property Highlighting                   |
+| 3   | **Cluttered Log Locating**   | C1 — locating logs in clutter         | Color Coding, filtering, collapse/pause                     |
+| 4   | **Object Exploration**       | C2 — data structures lack interaction | Property Highlighting, Synchronized Interaction, Collection |
+| 5   | **Real-Time Mouse Tracking** | C4 + Section 7.3 future work          | Timeline Sparkline, LLM Insight                             |
 
 ## Getting Started
 
@@ -150,11 +150,11 @@ function App() {
 
 ## Team
 
-| Name | Email |
-|------|-------|
-| Zichen Tian | zichen.tian.2023@phdcs.smu.edu.sg |
-| Huihui Huang | hh.huang.2024@phdcs.smu.edu.sg |
-| Ni Zhang | ni.zhang.2025@phdcs.smu.edu.sg |
+| Name         | Email                             |
+| ------------ | --------------------------------- |
+| Zichen Tian  | zichen.tian.2023@phdcs.smu.edu.sg |
+| Huihui Huang | hh.huang.2024@phdcs.smu.edu.sg    |
+| Ni Zhang     | ni.zhang.2025@phdcs.smu.edu.sg    |
 
 **Course:** CS702 — Computational Interaction, Singapore Management University
 

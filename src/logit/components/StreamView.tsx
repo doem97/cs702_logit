@@ -14,9 +14,10 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import type { StreamState, LogEntry } from '../types';
 import { ObjectExplorer } from './ObjectExplorer';
-import { BarChart } from './BarChart';
-import { TimelineSparkline } from './TimelineSparkline';
-import { LLMInsightPanel } from './LLMInsight';
+// [Phase 3] Bar Chart, Timeline Sparkline, LLM Insight — uncomment for next phase
+// import { BarChart } from './BarChart';
+// import { TimelineSparkline } from './TimelineSparkline';
+// import { LLMInsightPanel } from './LLMInsight';
 import { useStreamActions } from '../hooks';
 
 interface StreamViewProps {
@@ -25,7 +26,8 @@ interface StreamViewProps {
 
 export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
   const actions = useStreamActions(stream.id);
-  const [showInsight, setShowInsight] = useState(false);
+  // [Phase 3] LLM Insight toggle — uncomment for next phase
+  // const [showInsight, setShowInsight] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
@@ -128,11 +130,11 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
         </div>
       </div>
 
-      {/* --- Timeline Sparkline (Extension 2) --- */}
-      <TimelineSparkline entries={stream.entries} color={stream.color} />
+      {/* [Phase 3] Timeline Sparkline — uncomment for next phase */}
+      {/* <TimelineSparkline entries={stream.entries} color={stream.color} /> */}
 
-      {/* --- Collected Properties --- */}
-      {stream.collectedPaths.length > 0 && (
+      {/* [Phase 3] Collected Properties — uncomment for next phase */}
+      {/* {stream.collectedPaths.length > 0 && (
         <div className="stream-collected">
           <div className="stream-collected-header">📌 Collected Properties</div>
           {stream.collectedPaths.map((path) => (
@@ -146,7 +148,7 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
             </span>
           ))}
         </div>
-      )}
+      )} */}
 
       {/* --- Stream Body --- */}
       {!stream.collapsed && (
@@ -155,10 +157,8 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
             <StreamListView
               entries={stream.entries}
               highlightedPaths={stream.highlightedPaths}
-              collectedPaths={stream.collectedPaths}
               expandedPaths={stream.expandedPaths}
               onDoubleClickKey={actions.toggleHighlightPath}
-              onRightClickKey={actions.toggleCollectedPath}
               onToggleExpand={actions.toggleExpandedPath}
             />
           )}
@@ -168,23 +168,22 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
               sliderIndex={stream.sliderIndex}
               onSliderChange={actions.setSliderIndex}
               highlightedPaths={stream.highlightedPaths}
-              collectedPaths={stream.collectedPaths}
               expandedPaths={stream.expandedPaths}
               onDoubleClickKey={actions.toggleHighlightPath}
-              onRightClickKey={actions.toggleCollectedPath}
               onToggleExpand={actions.toggleExpandedPath}
             />
           )}
-          {stream.viewMode === 'bar' && (
+          {/* [Phase 3] Bar Chart view — uncomment for next phase */}
+          {/* {stream.viewMode === 'bar' && (
             <BarChart entries={stream.entries} color={stream.color} />
-          )}
+          )} */}
         </div>
       )}
 
-      {/* --- LLM Insight (Extension 1) --- */}
-      {showInsight && (
+      {/* [Phase 3] LLM Insight panel — uncomment for next phase */}
+      {/* {showInsight && (
         <LLMInsightPanel entries={stream.entries} streamName={stream.name} />
-      )}
+      )} */}
 
       {/* --- Stream Menu --- */}
       <div className="stream-menu">
@@ -228,7 +227,8 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
         >
           ↔ Slider
         </button>
-        {hasNumericEntries && (
+        {/* [Phase 3] Bar Chart menu button — uncomment for next phase */}
+        {/* {hasNumericEntries && (
           <button
             className={`stream-menu-btn ${stream.viewMode === 'bar' ? 'active' : ''}`}
             onClick={() => actions.setViewMode('bar')}
@@ -236,16 +236,17 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
           >
             📊 Bar
           </button>
-        )}
+        )} */}
 
-        <div className="stream-menu-separator" />
+        {/* [Phase 3] LLM Insight menu button — uncomment for next phase */}
+        {/* <div className="stream-menu-separator" />
         <button
           className={`stream-menu-btn ${showInsight ? 'active' : ''}`}
           onClick={() => setShowInsight(!showInsight)}
           title="LLM Insight"
         >
           💡 Explain
-        </button>
+        </button> */}
       </div>
     </div>
   );
@@ -255,12 +256,10 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
 const StreamListView: React.FC<{
   entries: LogEntry[];
   highlightedPaths: string[];
-  collectedPaths: string[];
   expandedPaths: string[];
   onDoubleClickKey: (path: string) => void;
-  onRightClickKey: (path: string) => void;
   onToggleExpand: (path: string) => void;
-}> = ({ entries, highlightedPaths, collectedPaths, expandedPaths, onDoubleClickKey, onRightClickKey, onToggleExpand }) => {
+}> = ({ entries, highlightedPaths, expandedPaths, onDoubleClickKey, onToggleExpand }) => {
   const listEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -279,10 +278,8 @@ const StreamListView: React.FC<{
             <ObjectExplorer
               value={entry.value}
               highlightedPaths={highlightedPaths}
-              collectedPaths={collectedPaths}
               expandedPaths={expandedPaths}
               onDoubleClickKey={onDoubleClickKey}
-              onRightClickKey={onRightClickKey}
               onToggleExpand={onToggleExpand}
             />
           </div>
@@ -299,20 +296,16 @@ const StreamSliderView: React.FC<{
   sliderIndex: number;
   onSliderChange: (index: number) => void;
   highlightedPaths: string[];
-  collectedPaths: string[];
   expandedPaths: string[];
   onDoubleClickKey: (path: string) => void;
-  onRightClickKey: (path: string) => void;
   onToggleExpand: (path: string) => void;
 }> = ({
   entries,
   sliderIndex,
   onSliderChange,
   highlightedPaths,
-  collectedPaths,
   expandedPaths,
   onDoubleClickKey,
-  onRightClickKey,
   onToggleExpand,
 }) => {
     if (entries.length === 0) {
@@ -357,10 +350,8 @@ const StreamSliderView: React.FC<{
             value={currentEntry.value}
             prevValue={prevEntry?.value}
             highlightedPaths={highlightedPaths}
-            collectedPaths={collectedPaths}
             expandedPaths={expandedPaths}
             onDoubleClickKey={onDoubleClickKey}
-            onRightClickKey={onRightClickKey}
             onToggleExpand={onToggleExpand}
           />
         </div>

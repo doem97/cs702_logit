@@ -31,11 +31,12 @@ export const DemoApp: React.FC = () => {
         </p>
         <div className="demo-header-meta">
           <span className="demo-header-chip">Jiang, Sun &amp; Xia</span>
-          <span className="demo-header-chip demo-header-chip-ext">+ LLM Insight</span>
-          <span className="demo-header-chip demo-header-chip-ext">+ Timeline Sparkline</span>
+          {/* [Phase 3] Extension chips — uncomment for next phase */}
+          {/* <span className="demo-header-chip demo-header-chip-ext">+ LLM Insight</span> */}
+          {/* <span className="demo-header-chip demo-header-chip-ext">+ Timeline Sparkline</span> */}
         </div>
         <p className="demo-header-desc">
-          Explore 5 interactive scenarios below. The log panel on the right captures every <code>log()</code> call
+          Explore 4 interactive scenarios below. The log panel on the right captures every <code>log()</code> call
           with color-coded streams, property highlighting, slider navigation, and more.
         </p>
       </header>
@@ -45,7 +46,8 @@ export const DemoApp: React.FC = () => {
         <DemoSection2_ElementDebug />
         <DemoSection3_ClutteredLogs />
         <DemoSection4_ObjectExploration />
-        <DemoSection5_MouseTracking />
+        {/* [Phase 3] Mouse Tracking demo — uncomment for next phase */}
+        {/* <DemoSection5_MouseTracking /> */}
       </div>
     </div>
   );

@@ -161,19 +161,21 @@ const ObjectNodeExplorer: React.FC<{
         )}
         {keys.map((key) => {
           const childPath = path ? `${path}.${key}` : key;
-          const isCollected = collectedPaths.includes(childPath);
+          // [Phase 3] Property Collection — uncomment for next phase
+          // const isCollected = collectedPaths.includes(childPath);
           return (
-            <div key={key} className={`oe-property ${isCollected ? 'oe-collected' : ''}`}>
+            <div key={key} className="oe-property">
               <span
                 className="oe-key"
                 onDoubleClick={(e) => {
                   e.preventDefault();
                   onDoubleClickKey?.(childPath);
                 }}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  onRightClickKey?.(childPath);
-                }}
+                // [Phase 3] Right-click collection — uncomment for next phase
+                // onContextMenu={(e) => {
+                //   e.preventDefault();
+                //   onRightClickKey?.(childPath);
+                // }}
               >
                 {key}
               </span>
