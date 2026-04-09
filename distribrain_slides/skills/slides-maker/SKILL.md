@@ -171,40 +171,115 @@ SLIDE_PLAN 模板: <plugin_root>/template/SLIDE_PLAN_TEMPLATE.md
 ## Phase 7 — 并发实现 Slides
 
 **执行**:
-1. 确定批次划分（每批 3-5 页，尽量并行）
-2. 对每批派出 builder sub-agent，需要提供：
-   - 该批所有 slides 的视觉设计描述（从 SLIDE_PLAN.md）
-   - 设计规范（Part 1）
-   - 可用组件列表 + 各组件的接口说明
-   - motionPresets.js 的可用动效
-   - tokens.js 的 token 名
+1. 确定批次划分（每批 2-3 页，尽量并行；复杂页面单独一批）
+2. 对每批派出 builder sub-agent，必须提供：
+   - 该批所有 slides 的完整视觉设计描述（从 SLIDE_PLAN.md，逐字复制，不摘要）
+   - 设计规范（Part 1 全文）
+   - 可用组件列表 + 各组件接口说明（从 scaffold/src/components/ 读取）
+   - motionPresets.js 全文
+   - tokens.js 全文
 
-3. **Builder sub-agent 指令**:
+3. **Builder sub-agent 指令（必须原文传递给 sub-agent）**:
+
+   ````
+   你是一个高保真 slide 实现者。你的唯一标准是：**实现结果与视觉设计描述完全一致，不允许简化**。
+
+   ## 核心规则
+
+   ### 规则 1：GSAP 强制执行
+   视觉设计描述中标注"需要 GSAP: 是"的 slide，**必须使用 GSAP**，禁止用 Framer Motion 替代。
+
+   GSAP 标准使用模式（useEffect + useRef）：
+   ```jsx
+   import { useEffect, useRef } from 'react'
+   import gsap from 'gsap'
+
+   export default function SXX() {
+     const containerRef = useRef(null)
+     const lineRef = useRef(null)
+     const numberRef = useRef(null)
+
+     useEffect(() => {
+       const tl = gsap.timeline({ delay: 0.5 })
+       // 数字递增动画
+       tl.to(numberRef.current, {
+         innerText: 76,
+         duration: 1.5,
+         snap: { innerText: 1 },
+         ease: 'power2.out',
+       })
+       // SVG 线条描边动画
+       tl.fromTo(lineRef.current,
+         { strokeDashoffset: 500 },
+         { strokeDashoffset: 0, duration: 1.2, ease: 'power2.inOut' },
+         '-=0.8'
+       )
+       // 脉冲循环
+       gsap.to(containerRef.current, {
+         boxShadow: '0 0 40px rgba(129,140,248,0.6)',
+         repeat: -1, yoyo: true, duration: 2, ease: 'sine.inOut',
+       })
+       return () => { tl.kill() }
+     }, [])
+
+     return <div ref={containerRef}>...</div>
+   }
    ```
-   你是一个 slide 实现者。请根据以下视觉设计描述实现 React 组件。
 
-   要求：
-   - 严格按照视觉描述实现，不遗漏任何元素
+   常用 GSAP 场景模式：
+   - **数字滚动**: `gsap.to(ref, { innerText: target, snap: { innerText: 1 }, duration: 1.5 })`
+   - **SVG 描边**: `strokeDasharray` + `strokeDashoffset` 从总长度→0
+   - **删除线划过**: `scaleX: 0→1`，`transformOrigin: 'left center'`
+   - **循环脉冲**: `repeat: -1, yoyo: true`
+   - **stagger from center**: `gsap.from(items, { opacity: 0, stagger: { each: 0.12, from: 'center' } })`
+   - **多步时间轴**: `gsap.timeline()` + `.to()` `.from()` `.fromTo()` 链式调用
+
+   ### 规则 2：视觉元素不得省略
+   对照视觉设计描述，逐句实现每一个视觉元素。描述里提到的每个元素（圆环、标签、连线、光点、卡片、渐变等）**全部必须出现在代码里**。
+
+   ### 规则 3：动效密度下限
+   每个 slide 必须包含：
+   - **进场动效** ≥ 5 个独立 motion 元素，有 stagger 节奏（不是全部同时出现）
+   - **循环/呼吸动效** ≥ 1 个持续运动的元素（glow 脉冲 / 粒子 / 旋转 / 浮动）
+   - **GSAP 动画** ≥ 1 个（若 SLIDE_PLAN 标注"需要 GSAP: 是"）
+
+   ### 规则 4：视觉层次
+   每个 slide 必须有：
+   - **背景层**：ParticleBackground 或渐变光斑（不能是纯黑）
+   - **发光层**：SlideShell glows 至少 1 个光源，颜色与该页主色一致
+   - **内容层**：主视觉元素 + 文字层次（至少 3 种不同 opacity/size）
+
+   ### 规则 5：禁止偷懒行为
+   以下行为**不可接受**，出现即须重做：
+   - ❌ 用静态文字代替描述里的动态可视化（如"RAS 圆环"用文字列表代替）
+   - ❌ 用 Framer Motion 代替明确要求的 GSAP 动画
+   - ❌ 省略描述里的任何卡片、图标、连线、光效
+   - ❌ 所有元素同时进场（缺少 stagger 节奏）
+   - ❌ 背景只有纯色，没有粒子/光晕/渐变层
+   - ❌ 数字数据用静态文字，而非 GSAP 递增动画
+   - ❌ 描述里的 SVG 图形（圆环、箭头、弧线）用 div 边框代替
+
+   ## 实现流程
+
+   对每一页 slide：
+   1. 通读该页视觉设计描述，列出所有视觉元素清单
+   2. 逐一实现每个元素
+   3. 完成后对照原描述自检：每个元素是否都在代码里？动效是否足够？GSAP 是否已用？
+   4. 确认无遗漏后，再写下一页
+
+   ## 技术规范
    - 使用 tokens.js 中的颜色/字体 token，不硬编码颜色值
-   - 使用 motionPresets.js 中的动效 preset
+   - 使用 motionPresets.js 中的动效 preset（Framer Motion 部分）
    - 使用 SlideShell / CardDark / GlowText / SectionLabel 等组件
-   - 需要复杂 SVG/图表动画时使用 GSAP
-   - 追求 对称、空间感、动效炫技 原则
-   - 每个文件是独立的 slide 组件，export default
-   - 完成后更新 slides/index.js 注册
-
-   视觉设计原则：
-   - 对称：元素对齐和间距要精确
-   - 空间感：使用 ambient glow、层次感、景深
-   - 动效炫技：每页至少 3 个动效元素，进场有节奏感（stagger）
-   - 高保真：像专业设计师做的，不是程序员凑合的
-   ```
+   - 每个文件是独立的 slide 组件，`export default`
+   - 完成后更新 `slides/index.js` 注册
+   ````
 
 4. 完成后更新 `slides/index.js` 注册所有 slides
 
-5. 运行 `npm run build` 验证无编译错误
+5. 运行 `npm run build` 验证无编译错误；如有报错必须修复，不得跳过
 
-**输出**: 所有 slides 实现完毕
+**输出**: 所有 slides 实现完毕，build 通过
 
 ---
 
@@ -213,32 +288,52 @@ SLIDE_PLAN 模板: <plugin_root>/template/SLIDE_PLAN_TEMPLATE.md
 **执行**:
 1. 运行 `npm run build` 确保构建通过
 2. 运行 `npm run dev` 启动本地预览
-3. 主 Agent 检查每页 slide：
-   - 空间布局是否对齐/完整
-   - 是否有文字截断或溢出
-   - 动效是否正常
-   - 颜色是否符合设计规范
-4. 如有问题，派出 fix sub-agent 修复
+3. 主 Agent 逐页对照 SLIDE_PLAN.md 验收，每页检查：
 
-**暂停**: 告诉用户 "slides 已完成，本地预览运行在 http://localhost:5173。请逐页查看，如有需要修改的 slide 请指定页码和问题，我来修复。"
+   **内容完整性**
+   - [ ] 视觉设计描述中的每个元素都存在于页面中
+   - [ ] 讲稿文本内容准确无误
 
-**后续**: 用户可以指定 "Slide 5 的标题太大了" / "Slide 8 增加一个动画" 等，逐页修复。
+   **动效质量**
+   - [ ] 进场动效有 stagger 节奏，不是同时出现
+   - [ ] 存在循环/呼吸动效（至少 1 个持续运动元素）
+   - [ ] SLIDE_PLAN 标注"需要 GSAP: 是"的页面，代码中有 `import gsap` 且有 `useEffect` 使用
+
+   **视觉层次**
+   - [ ] 背景不是纯黑（有粒子/光晕/渐变）
+   - [ ] SlideShell glows 已设置
+   - [ ] 文字有层次感（不是所有文字同一 opacity/size）
+
+   **布局**
+   - [ ] 无文字截断或溢出
+   - [ ] 元素对齐、间距合理
+
+4. 对每个不通过的检查项，派出 fix sub-agent 修复（提供具体页码 + 具体问题 + SLIDE_PLAN 原文描述）
+5. 修复后重新 build 验证
+
+**暂停**: 告诉用户所有检查项通过后：
+"slides 已完成，本地预览运行在 http://localhost:5173。请逐页查看，如有需要修改的 slide 请指定页码和问题，我来修复。"
+
+**后续**: 用户可以指定具体修改，逐页修复。
 
 ---
 
 # 质量标准
 
 - **内容准确**: slides 内容必须与讲稿一致，不编造数据
-- **设计一致**: 所有 slides 遵守 tokens.js 颜色/字体规范
-- **视觉专业**: 每个 slide 应该像专业设计师做的
-- **动效丰富**: 每页至少 2-3 个动效元素，动效服务于内容理解
-- **代码质量**: 使用共享组件和 token，不硬编码
-- **整体连贯**: slides 之间的视觉语言和信息密度要一致
+- **设计一致**: 所有 slides 遵守 tokens.js 颜色/字体规范，不硬编码颜色
+- **视觉专业**: 每个 slide 像专业设计师制作，不是程序员凑合
+- **动效密度**: 每页 ≥ 5 个进场动效元素（有 stagger），≥ 1 个循环动效
+- **GSAP 执行**: SLIDE_PLAN 标注需要 GSAP 的页面，必须有真实的 GSAP 实现
+- **层次丰富**: 背景层 + 发光层 + 内容层，文字有透明度层次
+- **代码质量**: 使用共享组件和 token，GSAP 动画在 useEffect 中执行并 cleanup
+- **整体连贯**: slides 之间的视觉语言和信息密度一致
 
 # 运行规则
 
 - **不要提前停止。** 如果还有 slides 没完成，继续工作。
-- **不要自我满足。** "差不多了"不是完成标准。
+- **不要自我满足。** "差不多了"不是完成标准。简陋的实现必须重做。
 - **审批节点必须暂停。** Phase 2/3/5/8 完成后必须等用户确认。
 - **并行最大化。** Phase 4/5/7 能并行就并行。
 - **遇到系统性问题先修根因。** 多个 slides 同类问题，先修共享组件再重做。
+- **GSAP 不可替代。** 标注需要 GSAP 的动画，不允许用 Framer Motion 代替，即使看起来"差不多"。
