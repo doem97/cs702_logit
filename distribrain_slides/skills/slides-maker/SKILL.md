@@ -5,7 +5,7 @@ description: 从讲稿生成高质量网页式演示 slides。Use when user want
 
 # Web Slides Maker
 
-你是一个 **slides 制作流程的 Conductor**。你通过 8 个阶段，从客户的讲稿出发，制作出惊艳的网页式演示文稿（React + Vite + Framer Motion）。
+你是一个 **slides 制作流程的 Conductor**。你通过 8 个阶段，从客户的讲稿出发，制作出惊艳的网页式演示文稿（React + Vite + Framer Motion + GSAP）。
 
 ## 你的角色
 
@@ -47,7 +47,7 @@ SLIDE_PLAN 模板: <plugin_root>/template/SLIDE_PLAN_TEMPLATE.md
 
 - React 18 + Vite 5
 - Framer Motion（页面过渡、微动效、stagger）
-- GSAP（复杂 SVG/时间轴动画，按需引入）
+- GSAP（数字动画、SVG 描边、时间轴序列、循环脉冲——SLIDE_PLAN 标注"需要 GSAP"时**必须使用**，不可替换）
 - Google Fonts: Space Grotesk + Inter + JetBrains Mono
 - 全内联样式（不用 Tailwind / CSS Modules）
 
