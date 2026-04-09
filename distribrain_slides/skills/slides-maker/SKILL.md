@@ -337,3 +337,117 @@ SLIDE_PLAN 模板: <plugin_root>/template/SLIDE_PLAN_TEMPLATE.md
 - **并行最大化。** Phase 4/5/7 能并行就并行。
 - **遇到系统性问题先修根因。** 多个 slides 同类问题，先修共享组件再重做。
 - **GSAP 不可替代。** 标注需要 GSAP 的动画，不允许用 Framer Motion 代替，即使看起来"差不多"。
+
+---
+
+# 效果词典
+
+Builder 参考手册。SLIDE_PLAN 视觉描述中出现对应关键词时，使用指定的库/方式实现，**不得降级为静态或更简单的替代方案**。
+
+---
+
+## 文字效果
+
+| 效果名 | SLIDE_PLAN 可能出现的关键词 | 正确实现方式 | 禁止替代 |
+|--------|--------------------------|------------|---------|
+| 打字机 | 打字机、逐字打出、TypewriterText | `TypewriterText` 组件，`speed` + `delay` 参数 | 不得用静态文字直接显示 |
+| 逐词/逐字 stagger | 逐字进场、每个字单独、字符 stagger | Framer Motion：将文字 split 为数组，`motion.span` + `stagger`，`variants` 父子传递 | 不得整句同时 fadeIn |
+| 渐变流光文字 | 渐变文字、三色渐变、流光、shimmer | CSS `background: linear-gradient; background-clip: text; -webkit-text-fill-color: transparent`，配合 `@keyframes background-position` | 不得用单色文字代替 |
+| 文字模糊揭示 | 模糊→清晰、blur reveal、焦距拉近 | Framer Motion `filter: blur(12px)→blur(0)`，配合 `opacity: 0→1` | 不得只用 fadeIn |
+| 高亮扫过 | 马克笔、高亮扫、underline sweep | 伪元素 `::after` + `scaleX: 0→1`，`transformOrigin: left`，半透明色块叠在文字下方 | 不得用静态 underline |
+| 数字递增 | 从0滚到、数字动画、counter | GSAP `innerText` + `snap` | 不得用静态数字 |
+| 文字乱码还原 | scramble、乱码、解码 | GSAP ScrambleText plugin 或手写：`useEffect` 中 `setInterval` 随机字符→目标字符 | 不得直接显示最终文字 |
+| 文字描边/轮廓 | outline text、镂空文字 | CSS `-webkit-text-stroke: 1px color; -webkit-text-fill-color: transparent` | — |
+
+---
+
+## SVG / 图形动画
+
+| 效果名 | SLIDE_PLAN 可能出现的关键词 | 正确实现方式 | 禁止替代 |
+|--------|--------------------------|------------|---------|
+| 线条描边生长 | 线条绘制、描边、draw、线从左向右 | GSAP：`strokeDasharray = totalLength; strokeDashoffset: length→0` | 不得用 div border 代替 SVG |
+| 弧线/贝塞尔曲线 | 弧线、连接两点、curved line、arc | SVG `<path d="M...Q...">` + GSAP `strokeDashoffset` | 不得用直线代替 |
+| 箭头沿路径运动 | 沿路径、路径动画、motionPath | GSAP `MotionPathPlugin`：`gsap.to(arrow, { motionPath: { path: '#svgPath' } })` | 不得用位移模拟 |
+| 圆形进度环 | 圆环进度、progress ring、环形 | SVG `<circle>` + `stroke-dasharray: circumference`，GSAP 或 Framer 驱动 `strokeDashoffset` | 不得用 div border-radius 模拟 |
+| 同心圆扩散 | 涟漪、水波、ripple、pulse rings | 多层 `<circle>` 依次 `scale + opacity: 1→0`，GSAP stagger repeat | 不得只做一个圆 |
+| 形状/节点连线 | 节点连接、网络图、graph、关系线 | SVG `<line>` 或 `<path>` 动态生成 + GSAP `strokeDashoffset` stagger | 不得用静态图片替代 |
+| 删除线划过 | 删除、划掉、strike through | GSAP `scaleX: 0→1`，`transformOrigin: left center`，颜色与语义配合 | 不得用静态 `text-decoration` |
+
+---
+
+## 数据可视化
+
+| 效果名 | SLIDE_PLAN 可能出现的关键词 | 正确实现方式 | 禁止替代 |
+|--------|--------------------------|------------|---------|
+| 柱状图生长 | 柱状图、bar chart、条形图生长 | div 或 SVG `rect`，GSAP `scaleY: 0→1`，`transformOrigin: bottom`，stagger | 不得用静态高度 |
+| 折线图描绘 | 折线图、line chart、曲线增长 | SVG `<polyline>` 或 `<path>` + GSAP `strokeDashoffset` | 不得用静态图片 |
+| 饼图/环形图 | 饼图、donut、占比 | SVG `<circle>` + `stroke-dasharray` 计算各段，GSAP 依次填充 | 不得用 CSS border 模拟 |
+| 散点逐个出现 | 散点、dot by dot、逐个弹出 | Framer Motion `motion.circle` + stagger `springPop`，或 GSAP `stagger from random` | 不得一次性全部显示 |
+| 进度条填充 | 进度条、progress bar、fill | `ProgressBar` 组件，或 GSAP `scaleX: 0→target`，`transformOrigin: left` | 不得用静态宽度 |
+| 雷达图扫描 | 雷达、radar、扫描线旋转 | SVG 扇形 + GSAP `rotation: 0→360`，`repeat: -1`，`transformOrigin: center` | 不得用静态图示 |
+
+---
+
+## 背景 / 氛围
+
+| 效果名 | SLIDE_PLAN 可能出现的关键词 | 正确实现方式 | 禁止替代 |
+|--------|--------------------------|------------|---------|
+| 粒子网络 | 粒子、星座连线、particle | `ParticleBackground` 组件，`colors`/`count`/`speed`/`connectionDistance` 参数调节 | 不得用纯色背景代替 |
+| 径向光晕 | 光晕、glow、聚光灯、ambient | `SlideShell glows` 数组，每项指定 `top/left/color/width/height` | 不得省略 glows |
+| 渐变流动背景 | 渐变动画、aurora、极光、色彩流动 | CSS `@keyframes` 驱动 `background-position` 或 `background-size`，多色 `linear-gradient` | 不得用静态渐变 |
+| 噪声纹理叠加 | 颗粒感、noise、质感 | SVG `feTurbulence` filter 叠加，低 opacity（0.03-0.06） | — |
+| 网格线背景 | 网格、grid lines、坐标系背景 | CSS `repeating-linear-gradient`，颜色用 token，opacity 0.05-0.1 | 不得省略不做 |
+| 扫描线 | 扫描线、CRT、科技感扫描 | CSS `@keyframes` 驱动半透明水平线从上到下，`repeat` | — |
+| 极光/渐变模糊 | 极光、渐变光斑、blobs | 多个绝对定位 div，`border-radius: 50%`，`filter: blur(80px)`，各色 token，缓慢 `@keyframes` 位移 | — |
+
+---
+
+## 进场 / 揭示
+
+| 效果名 | SLIDE_PLAN 可能出现的关键词 | 正确实现方式 | 禁止替代 |
+|--------|--------------------------|------------|---------|
+| clip-path 矩形擦除 | 从左划入、擦除、wipe reveal | Framer Motion `clipPath: 'inset(0 100% 0 0)'→'inset(0 0% 0 0)'` | 不得用 slideIn 代替 |
+| clip-path 圆形展开 | iris open、圆形展开、从中心扩散 | Framer Motion `clipPath: 'circle(0% at 50% 50%)'→'circle(150% at 50% 50%)'` | 不得用 scaleIn 代替 |
+| 模糊→清晰 | 焦距、blur reveal、从虚到实 | Framer Motion `filter: 'blur(16px)'→'blur(0px)'` + `opacity: 0→1` | 不得只用 fadeIn |
+| 翻转进场 | 翻转、flip、3D旋转 | Framer Motion `rotateY: -90→0`，父元素设 `perspective: 1000px` | — |
+| 层叠卡片展开 | 扑克牌展开、stacked cards、fan out | 多张绝对定位 CardDark，GSAP 或 Framer stagger `rotate + x` | 不得用顺序列表代替 |
+| 从指定点缩放 | 从某点展开、origin scale | Framer `scale: 0→1` + CSS `transformOrigin: 'top left'` 等 | — |
+
+---
+
+## 持续循环动效
+
+| 效果名 | SLIDE_PLAN 可能出现的关键词 | 正确实现方式 | 禁止替代 |
+|--------|--------------------------|------------|---------|
+| 呼吸发光 | 呼吸、脉冲、pulsing glow | GSAP `box-shadow/text-shadow repeat:-1 yoyo:true` 或 Framer `animate` 数组循环 | 不得只做静态 glow |
+| 浮动上下 | 浮动、floating、悬停漂浮 | Framer `animate: { y: [0, -10, 0] }` + `repeat: Infinity`，`ease: easeInOut` | — |
+| 旋转循环 | 旋转、spinning、缓慢旋转 | GSAP `rotation: 360, repeat: -1, ease: 'none'` 或 Framer `animate: { rotate: 360 }` | 不得用 CSS `animation: spin` 硬编码 |
+| 流光边框 | 流光、光流边框、neon border | CSS `@keyframes` 驱动 `border-image` 或伪元素 `background-position` | — |
+| 水波纹扩散 | 涟漪循环、wave、扩散 | 多圈 `scale + opacity` GSAP stagger repeat，从内向外依次扩大消失 | 不得只做一圈 |
+| 粒子汇聚/发散 | 粒子向中心、能量汇聚 | `ParticleBackground` 自定义 `direction` 参数，或手写 Canvas `requestAnimationFrame` | — |
+
+---
+
+## 库选用规范
+
+**GSAP（必须用的场景）**
+- 数字递增、SVG 描边、时间轴多步序列、循环脉冲、路径运动、stagger from center/random、`repeat + yoyo`
+- 凡 SLIDE_PLAN 写"GSAP timeline"、"GSAP drawSVG"、"GSAP stagger"：必须用 GSAP，不得替换
+
+**Framer Motion（首选场景）**
+- 进场动效（fadeUp/slideIn/springPop/scaleIn）、hover 交互、clip-path 揭示、filter blur、页面过渡、AnimatePresence 退场
+- 使用 `motionPresets.js` 中的 preset，保持全局一致性
+
+**CSS Animation（仅用于）**
+- 无法用 JS 驱动的纯样式效果：渐变流动背景、扫描线、流光边框、噪声纹理
+- 必须用 CSS custom properties (var) 引用 token 颜色，不硬编码
+
+**Canvas / requestAnimationFrame（仅用于）**
+- 高性能粒子（>500 个）、实时 mouse tracking、WebGL 效果
+- 一般场景优先用 `ParticleBackground` 组件，不要重复造轮子
+
+**绝对禁止**
+- 用 GIF/静态图片代替任何动画效果
+- 用 `setTimeout` 链式调用代替 GSAP timeline
+- 用 CSS `transition` 代替需要精确时序的复杂动画
+- 将多个不同库混用在同一个动画对象上（如同时用 Framer 和 GSAP 控制同一元素）
