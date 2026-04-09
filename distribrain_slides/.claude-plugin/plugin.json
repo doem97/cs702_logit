@@ -1,0 +1,16 @@
+{
+  "name": "distribrain_slides",
+  "description": "从讲稿生成高质量网页式演示 slides (React + Vite + Framer Motion)。支持 8 步流程：讲稿切分 → 设计规范 → 视觉方案 → 并发实现 → 验收。",
+  "version": "0.1.0",
+  "author": {
+    "name": "DistriBrain"
+  },
+  "keywords": [
+    "slides",
+    "presentation",
+    "react",
+    "vite",
+    "framer-motion",
+    "web-slides"
+  ]
+}

@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: #080808;
+  color: #F0F0F0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+::selection {
+  background: rgba(245, 158, 11, 0.3);
+  color: #fff;
+}

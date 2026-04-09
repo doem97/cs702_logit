@@ -73,7 +73,7 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
     };
   }, [isDragging]);
 
-  const hasNumericEntries = stream.entries.some((e) => typeof e.value === 'number');
+  const _hasNumericEntries = stream.entries.some((e) => typeof e.value === 'number');
 
   const style: React.CSSProperties = position
     ? { position: 'fixed', left: position.x, top: position.y, zIndex: 9999 }
@@ -228,7 +228,7 @@ export const StreamView: React.FC<StreamViewProps> = ({ stream }) => {
           ↔ Slider
         </button>
         {/* [Phase 3] Bar Chart menu button — uncomment for next phase */}
-        {/* {hasNumericEntries && (
+        {/* {_hasNumericEntries && (
           <button
             className={`stream-menu-btn ${stream.viewMode === 'bar' ? 'active' : ''}`}
             onClick={() => actions.setViewMode('bar')}

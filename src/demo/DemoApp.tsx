@@ -47,7 +47,7 @@ export const DemoApp: React.FC = () => {
         <DemoSection3_ClutteredLogs />
         <DemoSection4_ObjectExploration />
         {/* [Phase 3] Mouse Tracking demo — uncomment for next phase */}
-        {/* <DemoSection5_MouseTracking /> */}
+        {/* <_DemoSection5_MouseTracking /> */}
       </div>
     </div>
   );
@@ -321,7 +321,7 @@ const DemoSection4_ObjectExploration: React.FC = () => {
 /**
  * Demo 5: Mouse position tracking (real-time)
  */
-const DemoSection5_MouseTracking: React.FC = () => {
+const _DemoSection5_MouseTracking: React.FC = () => {
   const trackingRef = useRef(false);
   const [tracking, setTracking] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
