@@ -10,7 +10,7 @@ In the repo root:
 claude --plugin-dir ./distribrain_slides
 ```
 
-Then tell Claude: "帮我从这个讲稿生成 slides" or "make slides from `path/to/script.md`".
+Then tell Claude: "帮我从这个讲稿生成 slides".
 
 Claude will walk through an 8-phase process — splitting the script, designing the visual spec, and building the slide components — pausing for your approval at key stages.
 
