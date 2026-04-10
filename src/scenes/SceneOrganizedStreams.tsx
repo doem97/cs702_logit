@@ -26,8 +26,8 @@ export function SceneOrganizedStreams() {
       }
       const { i, j } = entries[idx];
       log({ i, j, product: i * j, sum: i + j, phase: idx === 0 ? 'init' : 'running' })
-        .name('Nested Loop').color('#4A90D9');
-      log(i * j).name('Products').color('#E57373');
+        .id('nested-loop').name('Nested Loop').color('#4A90D9');
+      log(i * j).id('products').name('Products').color('#E57373');
       idx++;
     }, 300);
   }, [running]);
