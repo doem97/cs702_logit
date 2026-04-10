@@ -65,7 +65,7 @@ export function SceneOrganizedStreams() {
         </button>
         {done && (
           <span className="font-label text-xs text-on-surface-variant animate-fade-in">
-            12 entries logged across 2 streams →
+            12 entries logged →
           </span>
         )}
       </div>

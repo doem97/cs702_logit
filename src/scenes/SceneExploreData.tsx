@@ -56,7 +56,7 @@ export function SceneExploreData() {
           Log Complex Object
         </button>
         <p className="font-label text-[11px] text-on-surface-variant/60">
-          Click several times, then switch to Slider view in the right panel →
+          Click several times, then switch to Slider view →
         </p>
       </div>
 
