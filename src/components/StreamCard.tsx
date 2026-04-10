@@ -3,6 +3,9 @@ import type { StreamState } from '../logit';
 import { useStreamActions } from '../logit';
 import { StreamListView } from './StreamListView';
 import { StreamSliderView } from './StreamSliderView';
+import { BarChart } from './BarChart';
+import { TimelineSparkline } from './TimelineSparkline';
+import { LLMInsightPanel } from './LLMInsightPanel';
 
 interface StreamCardProps {
   stream: StreamState;
@@ -51,8 +54,7 @@ export function StreamCard({ stream }: StreamCardProps) {
         </div>
       )}
 
-      {/* Sparkline placeholder — wired in Task 4 */}
-      {/* <TimelineSparkline entries={stream.entries} color={stream.color} /> */}
+      <TimelineSparkline entries={stream.entries} color={stream.color} />
 
       {/* Body */}
       {!isCollapsed && (
@@ -78,19 +80,14 @@ export function StreamCard({ stream }: StreamCardProps) {
             />
           )}
           {stream.viewMode === 'bar' && hasNumeric && (
-            /* Bar chart placeholder — wired in Task 4 */
-            <div className="px-3 py-2 text-xs text-on-surface-variant font-body italic">
-              Bar chart — connect in Task 4
-            </div>
+            <BarChart entries={stream.entries} color={stream.color} />
           )}
         </>
       )}
 
       {/* LLM insight placeholder — wired in Task 5 */}
       {showInsight && (
-        <div className="px-3 py-2 border-t border-outline-variant/10 text-xs text-on-surface-variant italic">
-          LLM Insight — connect in Task 5
-        </div>
+        <LLMInsightPanel entries={stream.entries} streamName={stream.name} />
       )}
 
       {/* Controls */}
