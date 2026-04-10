@@ -21,7 +21,8 @@ export function ObjectExplorer({
   onToggleExpand,
   depth = 0,
 }: ObjectExplorerProps) {
-  // Highlight filter: show only highlighted path + ancestors
+  // Highlight filter: show only highlighted path + ancestors.
+  // Single-highlight design: the store enforces at most one highlighted path at a time.
   const highlighted = highlightedPaths[0] ?? '';
   if (
     highlighted &&
@@ -59,6 +60,7 @@ export function ObjectExplorer({
     );
   }
   if (typeof value === 'object') {
+    // Cast is safe: value originates from log() calls with JSON-compatible data
     return (
       <ObjectNode
         value={value as Record<string, unknown>}
@@ -139,6 +141,7 @@ function ArrayNode({ value, prevValue, path, highlightedPaths, expandedPaths, on
       {path !== '' && <span className="text-xs font-mono text-on-surface-variant cursor-pointer" onClick={handleToggle}>[</span>}
       {value.map((item, idx) => {
         const childPath = path ? `${path}[${idx}]` : `[${idx}]`;
+        // key=idx is intentional: this is a read-only viewer, arrays are never reordered
         return (
           <div key={idx} className="flex items-start gap-1 leading-5">
             <span className="text-xs font-mono text-on-surface-variant/50 flex-shrink-0">{idx}:</span>
