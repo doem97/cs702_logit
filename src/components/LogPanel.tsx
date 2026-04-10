@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLogStreams, logStore } from '../logit';
+import { StreamCard } from './StreamCard';
 
 export function LogPanel() {
   const streams = useLogStreams();
@@ -53,11 +54,7 @@ export function LogPanel() {
         ) : (
           <div className="flex flex-col divide-y divide-outline-variant/10">
             {panelStreams.map(stream => (
-              <div key={stream.id} className="p-3 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: stream.color }} />
-                <span className="font-label text-xs font-medium text-on-surface truncate flex-1">{stream.name}</span>
-                <span className="font-label text-[10px] text-on-surface-variant">{stream.entries.length}</span>
-              </div>
+              <StreamCard key={stream.id} stream={stream} />
             ))}
           </div>
         )}
