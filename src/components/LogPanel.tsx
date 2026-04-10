@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLogStreams, logStore } from '../logit';
 import { StreamCard } from './StreamCard';
 
 export function LogPanel() {
   const streams = useLogStreams();
   const [filter, setFilter] = useState('');
+  const visibleStreams = streams.filter(s => !s.attachedElementId);
+  const panelStreams = filter
+    ? visibleStreams.filter(s => s.id === filter)
+    : visibleStreams;
 
-  const panelStreams = (filter
-    ? streams.filter(s =>
-        s.name.toLowerCase().includes(filter.toLowerCase()) ||
-        s.id.toLowerCase().includes(filter.toLowerCase())
-      )
-    : streams
-  ).filter(s => !s.attachedElementId);
+  // Reset filter when the selected stream disappears (e.g. after clearAll)
+  useEffect(() => {
+    if (filter && !visibleStreams.find(s => s.id === filter)) setFilter('');
+  });
 
   return (
     <div className="h-full flex flex-col bg-surface-container-lowest">
@@ -30,17 +31,20 @@ export function LogPanel() {
           delete_sweep
         </button>
       </div>
-      {streams.length > 1 && (
+      {visibleStreams.length > 1 && (
         <div className="px-3 py-2 border-b border-outline-variant/10">
-          <input
-            type="text"
-            placeholder="Filter streams..."
+          <select
             value={filter}
             onChange={e => setFilter(e.target.value)}
-            className="w-full text-xs font-body bg-surface-container-low rounded px-2 py-1.5
-              text-on-surface placeholder:text-on-surface-variant/50 outline-none
-              focus:bg-surface-container transition-colors"
-          />
+            className="w-full text-[11px] font-label bg-surface-container-low rounded px-2 py-1.5
+              text-on-surface outline-none focus:bg-surface-container transition-colors cursor-pointer
+              border border-outline-variant/20 focus:border-outline-variant/40"
+          >
+            <option value="">All streams ({visibleStreams.length})</option>
+            {visibleStreams.map(s => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
         </div>
       )}
       <div className="flex-1 overflow-y-auto">
