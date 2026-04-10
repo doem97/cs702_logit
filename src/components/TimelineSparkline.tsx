@@ -37,14 +37,14 @@ export function TimelineSparkline({ entries, color, height = 32 }: { entries: Lo
     ctx.strokeStyle = '#dfe3e8'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
 
-    if (entries.length === 0) return;
+    // Compute value range once (used for both line/fill and dots)
+    const values = isNumeric ? entries.map(e => e.value as number) : [];
+    const vMin = isNumeric ? Math.min(...values) : 0;
+    const vMax = isNumeric ? Math.max(...values) : 0;
+    const vRange = vMax === vMin ? 1 : vMax - vMin;
+    const vy = (v: number) => h - pad - ((v - vMin) / vRange) * (h - 2 * pad);
 
     if (isNumeric) {
-      const values = entries.map(e => e.value as number);
-      const vMin = Math.min(...values), vMax = Math.max(...values);
-      const vRange = vMax === vMin ? 1 : vMax - vMin;
-      const vy = (v: number) => h - pad - ((v - vMin) / vRange) * (h - 2 * pad);
-
       // Area fill
       ctx.fillStyle = color + '20';
       ctx.beginPath();
@@ -66,13 +66,7 @@ export function TimelineSparkline({ entries, color, height = 32 }: { entries: Lo
     // Dots (for all entry types)
     entries.forEach(e => {
       const x = tx(e.timestamp);
-      let y = h / 2;
-      if (isNumeric) {
-        const values = entries.map(en => en.value as number);
-        const vMin = Math.min(...values), vMax = Math.max(...values);
-        const vRange = vMax === vMin ? 1 : vMax - vMin;
-        y = h - pad - (((e.value as number) - vMin) / vRange) * (h - 2 * pad);
-      }
+      const y = isNumeric ? vy(e.value as number) : h / 2;
       ctx.fillStyle = color;
       ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill();
     });
