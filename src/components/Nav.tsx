@@ -1,14 +1,14 @@
 export function Nav() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center px-6
-      bg-surface-container-lowest/90 backdrop-blur-[32px]
-      border-b border-outline-variant/15 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <header className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center px-6
+      bg-surface-container-lowest/80 backdrop-blur-[32px]
+      border-b border-outline-variant/10">
 
       {/* Branding */}
-      <span className="font-headline text-base font-semibold tracking-widest uppercase text-on-surface">
+      <span className="font-headline text-sm font-semibold tracking-widest uppercase text-on-surface">
         Log-it
       </span>
-      <div className="w-px h-5 bg-outline-variant/40 mx-5" />
+      <div className="w-px h-4 bg-outline-variant/40 mx-4" />
       <span className="font-body text-xs text-on-surface-variant">
         Interactive, Contextual &amp; Visual Logs
       </span>

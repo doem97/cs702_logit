@@ -13,7 +13,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeScene, onSceneChange }: SidebarProps) {
   return (
-    <aside className="fixed left-0 top-16 bottom-0 w-sidebar flex flex-col
+    <aside className="fixed left-0 top-12 bottom-0 w-sidebar flex flex-col
       bg-surface-container-low pt-6 pb-4 z-40">
       <div className="px-4 mb-3">
         <span className="font-label text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">
