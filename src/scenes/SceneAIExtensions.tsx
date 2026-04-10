@@ -18,15 +18,21 @@ export function SceneAIExtensions() {
     };
   }, []);
 
+  const handleMouseLeave = useCallback(() => {
+    lastPos.current = null;
+  }, []);
+
   useEffect(() => {
     const zone = zoneRef.current;
     if (!tracking) {
       if (timerRef.current) clearInterval(timerRef.current);
       zone?.removeEventListener('mousemove', handleMouseMove);
+      zone?.removeEventListener('mouseleave', handleMouseLeave);
       return;
     }
 
     zone?.addEventListener('mousemove', handleMouseMove);
+    zone?.addEventListener('mouseleave', handleMouseLeave);
     timerRef.current = setInterval(() => {
       if (lastPos.current) {
         log(lastPos.current).name('Mouse Position').color('#FFD54F');
@@ -36,8 +42,9 @@ export function SceneAIExtensions() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       zone?.removeEventListener('mousemove', handleMouseMove);
+      zone?.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [tracking, handleMouseMove]);
+  }, [tracking, handleMouseMove, handleMouseLeave]);
 
   const toggle = useCallback(() => setTracking(v => !v), []);
 

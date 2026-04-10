@@ -33,7 +33,7 @@ export function SceneTamingChaos() {
       }
       const { si, n } = schedule[idx];
       const s = STREAMS[si];
-      log(s.make(n)).name(s.name).color(s.color);
+      log(s.make(n)).id(s.name).name(s.name).color(s.color);
       idx++;
     }, 200);
   }, [running]);
@@ -74,9 +74,20 @@ export function SceneTamingChaos() {
           {running ? 'Generating…' : 'Generate Cluttered Logs'}
         </button>
         {done && (
-          <p className="font-label text-[11px] text-on-surface-variant/60 text-center">
-            15 entries logged. Try the filter box in the right panel →
-          </p>
+          <div className="flex items-start gap-2 bg-primary/8 border border-primary/20 rounded-xl px-4 py-3 text-left">
+            <span className="material-symbols-outlined text-[18px] text-primary mt-0.5 flex-shrink-0">arrow_forward</span>
+            <div>
+              <div className="font-label text-[11px] font-semibold text-primary mb-0.5">
+                Now try the Log Panel on the right →
+              </div>
+              <div className="font-body text-[10px] text-on-surface-variant leading-relaxed">
+                Each stream card has controls: <strong>filter</strong> by name (top search box),
+                <strong> ⏸ pause</strong> to freeze updates,
+                <strong> ⌄ collapse</strong> to hide the body, and
+                <strong> 🗑 delete</strong> to remove a paused stream.
+              </div>
+            </div>
+          </div>
         )}
       </div>
 

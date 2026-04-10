@@ -42,15 +42,16 @@ export function Sidebar({ activeScene, onSceneChange }: SidebarProps) {
           );
         })}
       </nav>
-      <div className="px-4 pt-4 border-t border-outline-variant/20 flex flex-col gap-2">
-        <button className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors">
-          <span className="material-symbols-outlined text-[14px]">description</span>
-          <span className="font-label text-[11px]">Docs</span>
-        </button>
-        <button className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors">
-          <span className="material-symbols-outlined text-[14px]">help_outline</span>
-          <span className="font-label text-[11px]">Support</span>
-        </button>
+      <div className="px-4 pt-4 border-t border-outline-variant/20">
+        <a
+          href="https://cs702pre.distribrain.com"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors"
+        >
+          <span className="material-symbols-outlined text-[14px]">slideshow</span>
+          <span className="font-label text-[11px]">Slides</span>
+        </a>
       </div>
     </aside>
   );
