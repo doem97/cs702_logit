@@ -20,13 +20,14 @@ export function LogPanel() {
           Active Streams
         </span>
         <span className="font-label text-[10px] text-on-surface-variant">{streams.length}</span>
-        <span
-          className="material-symbols-outlined text-[14px] text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors"
+        <button
+          type="button"
+          className="material-symbols-outlined text-[14px] text-on-surface-variant hover:text-on-surface transition-colors bg-transparent border-0 p-0 cursor-pointer"
           title="Clear all streams"
           onClick={() => logStore.clearAll()}
         >
           delete_sweep
-        </span>
+        </button>
       </div>
       {streams.length > 1 && (
         <div className="px-3 py-2 border-b border-outline-variant/10">

@@ -64,6 +64,10 @@ export default {
         body: ['Inter', 'sans-serif'],
         label: ['Inter', 'sans-serif'],
       },
+      spacing: {
+        'sidebar': '9rem',
+        'log-panel': '25rem',
+      },
     },
   },
   plugins: [],
