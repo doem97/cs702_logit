@@ -11,16 +11,18 @@ interface StreamListViewProps {
 }
 
 export function StreamListView({ entries, highlightedPaths, expandedPaths, onDoubleClickKey, onToggleExpand }: StreamListViewProps) {
-  const endRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const hasObjects = entries.some(e => typeof e.value === 'object' && e.value !== null);
 
-  // Auto-scroll to newest entry
+  // Auto-scroll within the card's own container — never touches page scroll
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
   }, [entries.length]);
 
   return (
-    <div className="overflow-y-auto max-h-64">
+    <div ref={containerRef} className="overflow-y-auto max-h-64">
       {entries.map((entry, idx) => (
         <div key={entry.id}
           className="flex gap-2 px-3 py-1.5 border-b border-outline-variant/10 last:border-0
@@ -42,7 +44,6 @@ export function StreamListView({ entries, highlightedPaths, expandedPaths, onDou
           </div>
         </div>
       ))}
-      <div ref={endRef} />
       {hasObjects && entries.length > 0 && (
         <div className="px-3 py-1.5 bg-surface-container/50">
           <span className="font-label text-[9px] text-on-surface-variant/40">
