@@ -63,13 +63,29 @@ export function TimelineSparkline({ entries, color, height = 32 }: { entries: Lo
       ctx.stroke();
     }
 
-    // Dots (for all entry types)
-    entries.forEach(e => {
-      const x = tx(e.timestamp);
-      const y = isNumeric ? vy(e.value as number) : h / 2;
-      ctx.fillStyle = color;
-      ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill();
-    });
+    if (isNumeric) {
+      // Dots on the line for numeric streams
+      entries.forEach(e => {
+        const x = tx(e.timestamp);
+        const y = vy(e.value as number);
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
+      });
+    } else {
+      // Rug plot: vertical ticks showing when each event fired
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      const tickH = h - pad * 2;
+      entries.forEach(e => {
+        const x = tx(e.timestamp);
+        ctx.globalAlpha = 0.7;
+        ctx.beginPath();
+        ctx.moveTo(x, pad);
+        ctx.lineTo(x, pad + tickH);
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+    }
   }, [entries, color, isNumeric, timeRange]);
 
   if (entries.length < 2) return null;
