@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { LogEntry } from '../logit';
 
 function analyzeLocally(entries: LogEntry[], streamName: string): string {
@@ -51,9 +51,13 @@ function analyzeLocally(entries: LogEntry[], streamName: string): string {
 
 const DEEPSEEK_API_KEY = 'sk-cbb4ce40281c4ed9ad0fe0efdb48fb54';
 
-async function analyzeWithDeepSeek(entries: LogEntry[], streamName: string): Promise<string> {
+async function streamDeepSeek(
+  entries: LogEntry[],
+  streamName: string,
+  onChunk: (text: string) => void,
+): Promise<void> {
   const data = entries.slice(-20).map(e => ({ timestamp: new Date(e.timestamp).toISOString(), value: e.value }));
-  const prompt = `You are a debugging assistant. Analyze log entries from stream "${streamName}":
+  const prompt = `You are a debugging assistant. Analyze these log entries from stream "${streamName}" concisely:
 1. Brief summary  2. Patterns/trends  3. Anomalies  4. Debugging suggestions
 
 Data (last ${data.length} entries):
@@ -62,31 +66,71 @@ ${JSON.stringify(data, null, 2)}`;
   const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${DEEPSEEK_API_KEY}` },
-    body: JSON.stringify({ model: 'deepseek-chat', messages: [{ role: 'user', content: prompt }], max_tokens: 500 }),
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 500,
+      stream: true,
+    }),
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
-  const json = await res.json();
-  return json.choices[0]?.message?.content ?? 'No analysis available.';
+
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop() ?? '';
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const payload = line.slice(6).trim();
+      if (payload === '[DONE]') return;
+      try {
+        const json = JSON.parse(payload);
+        const chunk = json.choices?.[0]?.delta?.content;
+        if (chunk) onChunk(chunk);
+      } catch { /* skip malformed */ }
+    }
+  }
 }
 
 export function LLMInsightPanel({ entries, streamName }: { entries: LogEntry[]; streamName: string }) {
   const [insight, setInsight] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [mode, setMode] = useState<'local' | 'ai' | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll insight box as text arrives
+  useEffect(() => {
+    if (streaming) bottomRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [insight, streaming]);
 
   const handleLocal = useCallback(() => {
-    setLoading(true);
     setMode('local');
-    setTimeout(() => { setInsight(analyzeLocally(entries, streamName)); setLoading(false); }, 300);
+    setStreaming(true);
+    setTimeout(() => { setInsight(analyzeLocally(entries, streamName)); setStreaming(false); }, 300);
   }, [entries, streamName]);
 
   const handleAI = useCallback(async () => {
-    setLoading(true);
     setMode('ai');
-    try { setInsight(await analyzeWithDeepSeek(entries, streamName)); }
-    catch (err) { setInsight(`Error: ${err instanceof Error ? err.message : 'Unknown'}`); }
-    finally { setLoading(false); }
+    setInsight('');
+    setStreaming(true);
+    try {
+      await streamDeepSeek(entries, streamName, chunk => {
+        setInsight(prev => (prev ?? '') + chunk);
+      });
+    } catch (err) {
+      setInsight(`Error: ${err instanceof Error ? err.message : 'Unknown'}`);
+    } finally {
+      setStreaming(false);
+    }
   }, [entries, streamName]);
+
+  const loading = streaming;
 
   return (
     <div className="border-t border-outline-variant/10 bg-surface-container/30 px-3 py-2">
@@ -103,7 +147,7 @@ export function LLMInsightPanel({ entries, streamName }: { entries: LogEntry[]; 
             bg-surface-container text-on-surface hover:bg-surface-container-high
             disabled:opacity-40 transition-colors duration-150">
           <span className="material-symbols-outlined text-[12px]">search</span>
-          {loading && mode === 'local' ? 'Analyzing…' : 'Explain'}
+          Explain
         </button>
         <button
           type="button"
@@ -112,16 +156,23 @@ export function LLMInsightPanel({ entries, streamName }: { entries: LogEntry[]; 
           className="flex items-center gap-1 px-2 py-1 rounded font-label text-[10px]
             bg-secondary-container text-on-secondary-container hover:bg-secondary-fixed-dim
             disabled:opacity-40 transition-colors duration-150">
-          <span className="material-symbols-outlined text-[12px]">robot_2</span>
-          {loading && mode === 'ai' ? 'Thinking…' : 'AI Explain'}
+          <span className={`material-symbols-outlined text-[12px] ${loading && mode === 'ai' ? 'animate-spin' : ''}`}>
+            {loading && mode === 'ai' ? 'progress_activity' : 'robot_2'}
+          </span>
+          AI Explain
         </button>
         <span className="font-label text-[9px] text-on-surface-variant/40 ml-auto">DeepSeek</span>
       </div>
-      {insight && (
-        <pre className="font-mono text-[10px] text-on-surface leading-relaxed whitespace-pre-wrap
-          bg-surface-container rounded p-2 max-h-48 overflow-y-auto">
-          {insight}
-        </pre>
+      {insight !== null && (
+        <div className="bg-surface-container rounded p-2 max-h-48 overflow-y-auto">
+          <p className="font-body text-[10px] text-on-surface leading-relaxed whitespace-pre-wrap break-words">
+            {insight}
+            {streaming && mode === 'ai' && (
+              <span className="inline-block w-[6px] h-[10px] ml-0.5 bg-secondary align-middle animate-pulse rounded-sm" />
+            )}
+          </p>
+          <div ref={bottomRef} />
+        </div>
       )}
     </div>
   );
