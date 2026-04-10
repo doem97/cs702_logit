@@ -5,25 +5,6 @@ import { StreamCard } from '../components/StreamCard';
 export function SceneContextualLogging() {
   const [boxSize, setBoxSize] = useState({ width: 200, height: 120 });
   const boxRef = useRef<HTMLDivElement>(null);
-  const [cardPos, setCardPos] = useState(() => ({
-    x: Math.max(160, window.innerWidth - 430 - 288),
-    y: 80,
-  }));
-
-  const handleDragStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    const startX = e.clientX - cardPos.x;
-    const startY = e.clientY - cardPos.y;
-    const onMove = (ev: MouseEvent) => {
-      setCardPos({ x: ev.clientX - startX, y: ev.clientY - startY });
-    };
-    const onUp = () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-  }, [cardPos]);
 
   const capture = useCallback((width: number, height: number) => {
     if (!boxRef.current) return;
@@ -52,7 +33,7 @@ export function SceneContextualLogging() {
   const attachedStream = allStreams.find(s => s.attachedElementId === 'debug-target');
 
   return (
-    <div className="relative min-h-full px-8 py-10 bg-surface">
+    <div className="min-h-full px-8 py-10 bg-surface">
       <div className="mb-2">
         <span className="font-label text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">
           Scene 03
@@ -61,41 +42,14 @@ export function SceneContextualLogging() {
       <h1 className="font-headline text-5xl font-semibold tracking-[-0.02em] text-on-surface mb-4 leading-none">
         Contextual<br /><span className="font-light text-on-surface-variant">Logging</span>
       </h1>
-      <p className="font-body text-sm text-on-surface-variant leading-relaxed mb-10 max-w-md">
+      <p className="font-body text-sm text-on-surface-variant leading-relaxed mb-6 max-w-md">
         Log output can be spatially attached to a page element. The stream
         appears right next to the element being debugged — and follows it if
         it moves.
       </p>
 
-      {/* Target element — layout unaffected by stream card */}
-      <div className="mb-6">
-        <div
-          id="debug-target"
-          ref={boxRef}
-          className="bg-surface-container rounded-xl border-2 border-dashed border-outline-variant/30
-            flex items-center justify-center transition-all duration-300"
-          style={{ width: boxSize.width, height: boxSize.height }}
-        >
-          <div className="text-center pointer-events-none">
-            <span className="material-symbols-outlined text-[24px] text-on-surface-variant/20">crop_free</span>
-            <div className="font-label text-[10px] text-on-surface-variant/30 mt-1">Target Element</div>
-            <div className="font-mono text-[9px] text-on-surface-variant/20">{boxSize.width} × {boxSize.height}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Stream card — fixed so it never affects scroll, draggable */}
-      {attachedStream && (
-        <div
-          className="fixed z-30 w-72 shadow-xl rounded-xl overflow-hidden cursor-grab active:cursor-grabbing select-none"
-          style={{ left: cardPos.x, top: cardPos.y }}
-          onMouseDown={handleDragStart}
-        >
-          <StreamCard stream={attachedStream} />
-        </div>
-      )}
-
-      <div className="flex items-center gap-3 mb-10">
+      {/* Buttons first — stable, never shift */}
+      <div className="flex items-center gap-3 mb-8">
         <button
           type="button"
           onClick={logInfo}
@@ -116,6 +70,33 @@ export function SceneContextualLogging() {
         </button>
       </div>
 
+      {/* Demo area: target element + attached stream side-by-side */}
+      <div className="flex items-start gap-4 mb-10">
+        <div
+          id="debug-target"
+          ref={boxRef}
+          className="bg-surface-container rounded-xl border-2 border-dashed border-outline-variant/30
+            flex items-center justify-center transition-all duration-300 flex-shrink-0"
+          style={{ width: boxSize.width, height: boxSize.height }}
+        >
+          <div className="text-center pointer-events-none">
+            <span className="material-symbols-outlined text-[24px] text-on-surface-variant/20">crop_free</span>
+            <div className="font-label text-[10px] text-on-surface-variant/30 mt-1">Target Element</div>
+            <div className="font-mono text-[9px] text-on-surface-variant/20">{boxSize.width} × {boxSize.height}</div>
+          </div>
+        </div>
+        {attachedStream ? (
+          <div className="w-72 flex-shrink-0 shadow-lg rounded-xl overflow-hidden">
+            <StreamCard stream={attachedStream} />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 self-center text-on-surface-variant/30">
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span className="font-label text-[11px]">stream appears here</span>
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 gap-3 max-w-lg">
         {[
           { icon: 'location_on', title: 'Element Attachment', desc: 'log().element("id") ties output to a DOM element spatially.' },
@@ -129,7 +110,6 @@ export function SceneContextualLogging() {
           </div>
         ))}
       </div>
-
     </div>
   );
 }
